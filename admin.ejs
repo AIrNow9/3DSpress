@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Bookings</title>
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; max-width: 1000px; margin: 2rem auto; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ddd; padding: 0.5rem; }
+    th { background-color: #f2f2f2; }
+  </style>
+</head>
+<body>
+  <h1>Recent bookings</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Driver</th>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Pickup</th>
+        <th>Dropoff</th>
+        <th>When</th>
+        <th>Special?</th>
+        <th>Discount</th>
+        <th>Created</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% bookings.forEach(b => { %>
+        <tr>
+          <td><a href="/confirm/<%= b.id %>"><%= b.id %></a></td>
+          <td><%= b.driverid || b.driverId %></td>
+          <td><%= b.name %></td>
+          <td><%= b.phone %></td>
+          <td><%= b.pickup %></td>
+          <td><%= b.dropoff %></td>
+          <td><%= b.datetime %></td>
+          <td><%= (b.is_special ? b.is_special : b.is_special === 1 ? true : false) ? 'Yes' : 'No' %></td>
+          <td><%= b.discount || 0 %></td>
+          <td><%= b.created_at %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</body>
+</html>
