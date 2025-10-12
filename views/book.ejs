@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Book a ride with <%= driverId %></title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Book a ride with <%= driverId %></h1>
+      <form id="booking">
+        <input type="hidden" name="driverId" value="<%= driverId %>">
+        <label>Your name</label>
+        <input name="name" required placeholder="John Doe">
+        <div class="row">
+          <div>
+            <label>Phone (sms/call)</label>
+            <input name="phone" required placeholder="+1 312 555 0100">
+          </div>
+          <div>
+            <label>When (date & time)</label>
+            <input name="datetime" type="datetime-local" required>
+          </div>
+        </div>
+        <label>Pickup address</label>
+        <input name="pickup" required placeholder="123 N Main St, Chicago IL">
+        <label>Dropoff address</label>
+        <input name="dropoff" required placeholder="O'Hare International">
+        <label>Special Worker Code (optional)</label>
+        <input name="specialCode" placeholder="BARSTAFF2025 / NIGHTSHIFT2025 / SECURITY2025">
+        <label>Notes (optional)</label>
+        <textarea name="notes" rows="3" placeholder="Gate code, buzzer, etc."></textarea>
+        <button type="submit">Request Ride</button>
+      </form>
+      <div id="result" style="margin-top:1rem"></div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('booking').onsubmit = async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const payload = Object.fromEntries(fd.entries());
+      const res = await fetch('/api/book', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data.ok) {
+        document.getElementById('result').innerHTML =
+          '<p>Booked! Confirmation: <a href="' + data.confirmUrl + '">' + data.confirmUrl + '</a></p>' +
+          (data.booking && data.booking.is_special ? '<p class="badge">SPECIAL: ' +
+            data.booking.special_type + ' (-$' + data.booking.discount + ')</p>' : '');
+        e.target.reset();
+      } else {
+        document.getElementById('result').innerHTML = '<p class="error">Error: ' + (data.error || 'unknown') + '</p>';
+      }
+    }
+  </script>
+</body>
+</html>
